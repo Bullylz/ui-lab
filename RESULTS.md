@@ -2,7 +2,7 @@
 
 Student ID: 6787068  
 Name: Phumat Kodsila  
-Tool parts that I chose: Part 1 Selenium IDE and Part 4 Cypress
+Tool parts that I chose: Part 2 Selenium WebDriver in Java and Part 4 Cypress
 
 ## Part 0
 
@@ -23,11 +23,10 @@ Tool parts that I chose: Part 1 Selenium IDE and Part 4 Cypress
 | 6 | Admin page displayed latest recommendations | Pass |
 | 7 | Created pizza and its tool appeared in the admin list | Pass |
 
-## Part 1: Selenium IDE
+## Part 2: Selenium WebDriver in Java
 
-- Stable Submit target: `xpath=//button[@type='submit']`; `css=.btn` is fragile because several buttons can share the class.
-- Added explicit waits, stable label-based locators, generated pizza name, assertions, and login-needed check.
-- The exported Java test needs clearing before typing 600 and correcting generated-name assertions.
+- `QP01Test` uses explicit waits, stable label-based locators, generated pizza names, assertions, and the login-needed check.
+- `HomePage` and `AdminPage` keep page locators separate from test steps, so locator changes are localized.
 
 ## Part 4: Cypress
 
