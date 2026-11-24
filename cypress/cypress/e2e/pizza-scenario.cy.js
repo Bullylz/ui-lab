@@ -1,0 +1,31 @@
+describe('QP-01 A custom pizza reaches the admin list', () => {
+  it('follows the customer and admin steps', () => {
+    const pizzaName = `Lab Pizza ${new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 15)}`
+    cy.visit('/')
+    cy.get('h1').should('have.text', 'Looking to break out of your pizza routine?')
+    cy.contains('label', 'Advanced').click()
+    cy.contains('label', 'Max Calories per Slice').parent().find('input').clear().type('600')
+    cy.get('select').should('be.visible').select('Knife')
+    cy.get('#default-checkbox').check()
+    cy.get('input#pizza-name').clear().type(pizzaName)
+    cy.intercept('POST', '**/api/pizza').as('pizza')
+    cy.get('[name="pizza-please"]').click()
+    cy.wait('@pizza').then(({ request, response }) => {
+      expect(request.body.maxCaloriesPerSlice).to.equal(600)
+      const { pizza, calories } = response.body
+      cy.contains('#recommendations p', 'Name:').should('have.text', `Name: ${pizzaName}`)
+      cy.contains('#recommendations p', 'Tool:').should('have.text', `Tool: ${pizza.tool}`)
+      cy.contains('#recommendations p', 'Calories per slice:').should('have.text', `Calories per slice: ${calories}`)
+      expect(calories).to.be.at.most(600)
+      cy.wrap(pizza.tool).as('tool')
+      cy.screenshot('qp01-step4-recommendation')
+    })
+    cy.get('[name="rate-5"]').click()
+    cy.get('#rate-result').should('have.text', 'Please log in first.')
+    cy.screenshot('qp01-step5-login-needed')
+    cy.adminLogin('admin', 'admin')
+    cy.contains('Latest pizza recommendations').should('be.visible')
+    cy.get('@tool').then(tool => cy.contains('li', pizzaName).should('contain', `(tool=${tool},`))
+    cy.screenshot('qp01-step7-admin-list')
+  })
+})
